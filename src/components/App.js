@@ -16,31 +16,45 @@ class App extends Component {
     super()
     // TODO
     this.state = {
+      word: _.sample(WORDS), // explaining the random word we use for the game.
+      guesses: [] // our guesses throughout the game.
     }
   }
 
   choose (letter) {
-    // TODO
-    console.log('You clicked', letter)
+    // setting the state of the guesses to put the current guess in the empty space on the page.
+    this.setState({
+      guesses: [...this.state.guesses, letter]
+    })
   }
 
   get points () {
-    // TODO
-    return 0
+  // counting the number of correct guesses.
+    return this.state.word.split('').filter((letter) => {
+      return this.state.guesses.includes(letter)
+    }).length
   }
 
   render () {
+    // mapping the letters within the alphabet within the function
+    const letters = ALPHABET.map((letter, i) => {
+      return <LetterButton
+        value={letter}
+        // this runs the choose function to allow us to click and choose a letter
+        onChoose={() => this.choose(letter)}
+        // disabling the truthyness of the guesses which includes the letter
+        disabled={this.state.guesses.includes(letter)}
+        key={i} />
+    })
+
     return <div className='app'>
       <main>
+        {/* //step is adding the points onto the guesses being made from the function on line 31 */}
         <Snowman step={this.points} size={400} />
         {/* TODO */}
-        <Word value='SNOWMAN' guesses={['E', 'M', 'O']} />
+        <Word value={this.state.word} guesses={this.state.guesses} />
         <div className='keyboard'>
-          {/* TODO */}
-          <LetterButton
-            value='A'
-            onChoose={() => this.choose('A')}
-            disabled={false} />
+          {letters}
         </div>
       </main>
       <footer>It's like hangman, but, um... backwards or something.</footer>
